@@ -1,0 +1,42 @@
+#include <detection.h>
+#include <vector>
+#include <tclap/CmdLine.h>
+#include <gaussian_mixture_model.h>
+#include <apmm2.h>
+#include <CodeBook.h>
+#include <vibe2.h>
+#include <IModel.h>
+#include <wave_back.h>
+#include <cvblob.h>
+
+//using namespace alg
+
+
+class AdaBoost:public alg::Detection
+{
+private:
+    std::vector<alg::Detection*> classifiers;
+    std::vector<string> classifier_names;
+    std::vector<float> classifier_weights;
+   
+    inline string name() const {
+        return "ada";
+    }
+    inline string description() const {
+        return "Adaboost";
+    }
+    inline string version() const {
+        return "1.0";
+    }
+    inline int executionTime() const {
+        return 0;
+    }
+    inline int ram() const {
+        return 0;
+    }
+    
+    
+    void nextFrame(const IplImage* frame, cvb::CvBlobs &blobs);
+public:
+    AdaBoost()
+    {

@@ -1,0 +1,10 @@
+<configuration>
+	<detection name="agmm">
+	</detection>
+	<tracking name="dummy">
+	</tracking>
+	<blob_filtering name="blob_size_filter">
+		<parameter name="area_min_per">0.005</parameter>
+		<parameter name="area_max_per">0.25</parameter>		
+	</blob_filtering>
+</configuration>

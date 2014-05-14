@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<filters FilterNumber="2">
+  <Filter Tag="23" Conf=" Resize 1280 x 700 --&gt; 640 x 480">
+    <Parameters Number="3">
+      <w>640</w>
+      <h>480</h>
+      <algo>0</algo>
+    </Parameters>
+  </Filter>
+  <Filter Tag="56" Conf=" Resample to 8,00 fps (blend:0)">
+    <Parameters Number="2">
+      <newfps>8000</newfps>
+      <use_linear>0</use_linear>
+    </Parameters>
+  </Filter>
+</filters>

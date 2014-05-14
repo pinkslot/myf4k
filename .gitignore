@@ -1,0 +1,11 @@
+Tests/DetectionTracking/process_video
+Tests/DetectionTracking/video
+Tests/DetectionTracking/GroundTruth
+bin/
+3rdParty/
+*.swp
+*.o
+*.a
+*.d
+*~
+.fuse*

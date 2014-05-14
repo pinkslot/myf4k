@@ -1,0 +1,48 @@
+
+
+        for ( int i=0;i<classifier_names.size();i++ )
+        {
+            
+
+                if (strcmp(classifier_names[i].c_str(),"apmm")==0)
+                {
+                    alg::APMM2 *apmm =  new alg::APMM2();
+                    classifiers.push_back (apmm );
+                    continue;
+                }
+                if (strcmp(classifier_names[i].c_str(),"cb")==0)
+                {
+                    alg::CodeBook *cb = new alg::CodeBook() ;
+                    classifiers.push_back (cb );
+                    continue;
+                }
+                if (strcmp(classifier_names[i].c_str(),"im")==0)
+                {
+                    alg::IModel *im =  new alg::IModel();
+                    classifiers.push_back (im );
+                    continue;
+                }
+                if (strcmp(classifier_names[i].c_str(),"agmm")==0)
+                {
+                    alg::GaussianMixtureModel *gmm = new alg::GaussianMixtureModel();
+                    classifiers.push_back (gmm );
+                    continue;
+                }
+                if (strcmp(classifier_names[i].c_str(),"vb")==0)
+                {
+                    alg::ViBE2 *vb = new alg::ViBE2();
+                    classifiers.push_back (vb );
+                    continue;
+                }
+                if (strcmp(classifier_names[i].c_str(),"wb")==0)
+                {
+                    alg::wave_back *wb  = new alg::wave_back();
+                    classifiers.push_back (wb );
+                    continue;
+                }
+             
+            
+        }
+
+    }
+};

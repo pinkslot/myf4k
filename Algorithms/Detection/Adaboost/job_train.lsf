@@ -1,0 +1,17 @@
+#!/bin/bash
+#BSUB -n 1
+#BSUB -q fpl
+#BSUB -J adatr
+#BSUB -oo stdout.txt
+t=10
+c=200
+e=10
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/work/u00f4k00/simone/solibs
+./ada_boost_train -o ./ -t $t -c $c -r $e \
+	-i masks_1/frame_%d.png -g masks_1/mask_%d.png
+	#-i masks_3/frame_%d.png -g masks_3/mask_%d.png \
+	#-i masks_5/frame_%d.png -g masks_5/mask_%d.png \
+	#-i masks_10/frame_%d.png -g masks_10/mask_%d.png \
+	#-i masks_14/frame_%d.png -g masks_14/mask_%d.png \
+	#-i masks_29/frame_%d.png -g masks_29/mask_%d.png \
+	#-i masks_34/frame_%d.png -g masks_34/mask_%d.png

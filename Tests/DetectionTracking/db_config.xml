@@ -1,0 +1,6 @@
+<mysql>
+	<host>localhost</host>
+	<user>root</user>
+	<password>1</password>
+	<database>f4k_db</database>
+</mysql>

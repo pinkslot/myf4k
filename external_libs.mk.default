@@ -1,0 +1,19 @@
+# The external_libs.mk file allows to specify -I and -L arguments for external libraries, i.e.
+# required by the project but not included in the 3rdParty directory.
+# Since those settings are strongly machine-dependent, NO external_libs.mk FILE IS INCLUDED IN THE
+# REPOSITORY! Instead, this file (external_libs.mk.default) should be renamed and edited as appropriate.
+# The resulting external_libs.mk file SHOULD NOT BE ADDED TO THE REPOSITORY.
+# Below is the list of libraries which can be configured.
+
+# OpenCV
+OPENCV_INCLUDES := $(shell pkg-config --cflags opencv)
+OPENCV_LIB_INCLUDES := $(shell pkg-config --libs-only-L opencv)
+OPENCV_LIBS := $(shell pkg-config --libs opencv)
+
+# MySQL connector
+MYSQL_CONNECTOR_INCLUDES := -I/usr/include/cppconn -I/usr/local/include/cppconn
+MYSQL_CONNECTOR_LIB_INCLUDES := -L/usr/lib -L/usr/local/lib
+
+# Boost
+BOOST_INCLUDES := -I/usr/include -I/usr/local/include
+BOOST_LIB_INCLUDES := -L/usr/lib -L/usr/local/lib

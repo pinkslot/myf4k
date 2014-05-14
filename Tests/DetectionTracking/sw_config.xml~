@@ -1,0 +1,18 @@
+<configuration>
+	<frame_preproc name="contrast_stretch">
+		<parameter name="par_1">19</parameter>
+	</frame_preproc>
+	<frame_preproc name="other_preproc"/>
+	<detection name="gmm">
+		<parameter name="dilate_cycles_1">5</parameter>
+		<parameter name="dilate_cycles_2">10</parameter>
+	</detection>
+	<tracking name="cov">
+		<parameter name="enable_hist">1</parameter>
+		<parameter name="enablue_hue">1</parameter>
+	</tracking>
+	<blob_filtering name="blob_size_filter">
+	</blob_filtering>
+	<detection_evaluation name="det_eval"/>
+	<tracking_evaluation name="track_eval"/>
+</configuration>
