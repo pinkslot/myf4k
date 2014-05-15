@@ -145,13 +145,16 @@ Mat draw_frame;
 vector<const TrackedObject *> cur_tracked_objects;
 string video_path;
 
+
 void on_mouse(int evt, int x, int y, int flags, void* param)
 {
-	string src_prefix("GroundTruth/src/"), mask_prefix("GroundTruth/mask/");
-
-    if(evt==CV_EVENT_LBUTTONDOWN)
+    if(evt==CV_EVENT_LBUTTONDOWN || evt==CV_EVENT_RBUTTONDOWN)
     {
-		Log::info(0) << "x: " << x << "y " << y <<endl;
+    	string prefix;
+    	if (evt==CV_EVENT_LBUTTONDOWN)
+    		prefix = "GroundTruth/fish/";
+    	else
+    		prefix = "GroundTruth/nofish/";
 		for (unsigned int i = 0; i < cur_tracked_objects.size(); i++)
 		{
 			cvb::CvContourPolygon *contour = cvb::cvConvertChainCodesToPolygon(&cur_tracked_objects[i]->currentRegion().contour);				
@@ -160,16 +163,19 @@ void on_mouse(int evt, int x, int y, int flags, void* param)
 				pcontour[j] = cv::Point((*contour)[j]);
 			if (contour->size() > 3 && cv::pointPolygonTest(pcontour, Point2f(x, y), false) > 0)
 			{
-				Log::info(0) << "contour no: " << i <<endl;
-				string name(video_path + boost::to_string(C.frame_num) + boost::to_string(i) + ".bmp");
+				string name;
+			    stringstream ss(video_path + boost::to_string(C.frame_num) + boost::to_string(i));
+			    string item;
+			    while (std::getline(ss, item, '/'))
+			        name += item;
 				Mat mask = Mat::zeros(draw_frame.size(), CV_8UC1);
 				for (int y = 0; y < draw_frame.rows; y++)
 					for (int x = 0; x < draw_frame.cols; x++)
 						if (cv::pointPolygonTest(pcontour, Point2f(x, y), false) > 0)
 							mask.at<uchar>(y, x, 0) = 255;
-
-				imwrite(src_prefix + name, C.frame);
-				imwrite(mask_prefix + name, mask);				
+				Log::info(0) << name << endl;
+				imwrite(prefix + name + "_src.bmp", C.frame);
+				imwrite(prefix + name + "_msk.bmp", mask);		
 				return;
 			}	
 		}
@@ -1165,8 +1171,7 @@ int main(int argc, char** argv)
 					if(tracker->numTrackedObjects() > 0 || gt_results.getObjectsByFrame(C.frame_num).size() > 0 || debug_level > 1)
 					{
 						writer.write(draw_frame);
-						string win_name = boost::to_string(C.frame_num);
-						imshow(win_name+"frame_win", draw_frame);
+						imshow("frame_win", draw_frame);
 						cvSetMouseCallback("frame_win", on_mouse, 0); // ADD this line	
 						// Check other things to show
 						if(show_motion_output)
@@ -1177,7 +1182,8 @@ int main(int argc, char** argv)
 						{
 							imshow("postproc", C.postproc_output);
 						}
-						waitKey(0);
+						if (waitKey(1) == ' ')
+							while (waitKey(0) != ' ');
 					}
 					else
 					{
@@ -1203,7 +1209,7 @@ int main(int argc, char** argv)
 				Log::error() << ShellUtils::RED << "Error in main at frame " << C.frame_num << ": " << e.what() << ShellUtils::NORMAL << endl;
 				if(enable_debug && C.frame_num >= debug_from && C.frame_num <= debug_to)
 				{
-					waitKey(0);
+					waitKey(1);
 				}
 			}
 			catch(...)
@@ -1212,7 +1218,7 @@ int main(int argc, char** argv)
 				Log::error() << ShellUtils::RED << "Error in main at frame " << C.frame_num << "." << ShellUtils::NORMAL << endl;
 				if(enable_debug && C.frame_num >= debug_from && C.frame_num <= debug_to)
 				{
-					waitKey(0);
+					waitKey(1);
 				}
 			}
 			// Stop frame time
@@ -1231,6 +1237,7 @@ int main(int argc, char** argv)
 			Log::info(0) << ") s, for " << frame_fish_number << " objects." << endl;
 			//cout << "before frame end" << endl; sleep(10);
 		}
+		waitKey(0);
 		//cout << "before setting processing end" << endl; sleep(10);
 		// Set processing end info to db
 		if(enable_db)
