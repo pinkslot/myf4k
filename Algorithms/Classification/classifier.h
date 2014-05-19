@@ -3,33 +3,37 @@
 
 #include <iostream>
 #include <log.h>
-#include <highgui.h>
 #include "../algorithm.h"
-#include "histogram.h"
+#include <string>
+#include <svm.h>
 
 using namespace cv;
 using namespace std;
+typedef complex<long double> compd;
 
 namespace alg
 {
-
+	enum filling_type {FILL_FROM_FILE, FILL_FROM_IMAGE, FILL_FROM_DB}
+	
 	class Classifier : public alg::Algorithm
 	{
-		public:
+	private:
+		void extractAIM(const Mat &mask);
+		smv_model model;
 
-		//Methods
-		void train(const Mat& img);
-		Classifier();		
-				
+	public:
+
+		//Methods	
+		Classifier(filling_type ftype, string path = 0);
 		// Implement algorithm information
 		inline string name() const { return "classifier"; }
 		inline string type() const { return "classification"; }		
-		inline string description() const { return "Ada boost classifier"; }
+		inline string description() const { return "One class SVM classifier"; }
 		inline string version() const { return "1.0"; }
 		inline int executionTime() const { return 0; }
 		inline int ram() const { return 0; }
-		inline string input() const { return "cvb::CvBlobs"; }
-		inline string output() const { return "cvb::CvBlobs"; }		
+		inline string input() const { return "cvb::CvBlobs, cv::Mat"; }
+		inline string output() const { return "bool"; }		
 	};
 
 }

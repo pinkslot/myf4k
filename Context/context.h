@@ -5,6 +5,7 @@
 #include <cv.h>
 #include <cvblob.h>
 #include <results.h>
+#include <string.h>
 
 class Context
 {
@@ -39,6 +40,8 @@ class Context
 
 	// Filtered results
 	pr::Results filtered_results;
+
+	std::string file_name;
 
 };
 
