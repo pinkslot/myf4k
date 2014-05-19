@@ -2,28 +2,31 @@
 #ifndef GT_GENERATING_H
 #define GT_GENERATING_H
 
+#include "results.h"
 #include <context.h>
-#include <results.h>
 #include <db_helper.h>
-#include <db_connection.h>
+#include <cv.h>
+
+using namespace pr;
 
 class GtGenerating
 {
 private:
 	// fields
-	Context context;
-	db::DBConnection db_conn;	
-	pr::Results fish_results, nofish_results;
-
-	// methods
-	void on_mouse(int evt, int x, int y, int flags, void* param);
+	const Context &context;
+	// db::DBConnection db_conn;	
+	Results results;
 
 public:
-	inline GtGenerating(Context &c, db::DBConnection &d): context(c), db_conn(d)
+	inline const Context &getContext() { return context;}
+	inline Results &getResults() { return results;}
+
+	GtGenerating(const Context &c);
+	inline void nextFrame(cv::Mat frame) 
 	{
+		imshow("frame_win", frame);
 	}
-	void nextFrame();
-	void saveResult();
+	void saveResult(db::DBConnection *d);
 };
 
 #endif

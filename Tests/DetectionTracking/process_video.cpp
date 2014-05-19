@@ -20,6 +20,7 @@
 #include <csignal>
 #include <unistd.h>
 #include <context.h>
+#include <gt_generating.h>
 // Database includes
 #include <processed_video.h>
 #include <video.h>
@@ -40,6 +41,7 @@
 #include <detection_evaluation_chooser.h>
 #include <tracking_evaluation_chooser.h>
 #include <bayes_detection_evaluator.h>
+
 
 using namespace cv;
 using namespace pr;
@@ -138,50 +140,6 @@ void errorSignalHandler(int sig)
 	exit(1);
 }
 
-// Initialize context
-Context C;
-// Define buffer for each frame
-Mat draw_frame;
-vector<const TrackedObject *> cur_tracked_objects;
-string video_path;
-
-
-void on_mouse(int evt, int x, int y, int flags, void* param)
-{
-    if(evt==CV_EVENT_LBUTTONDOWN || evt==CV_EVENT_RBUTTONDOWN)
-    {
-    	string prefix;
-    	if (evt==CV_EVENT_LBUTTONDOWN)
-    		prefix = "GroundTruth/fish/";
-    	else
-    		prefix = "GroundTruth/nofish/";
-		for (unsigned int i = 0; i < cur_tracked_objects.size(); i++)
-		{
-			cvb::CvContourPolygon *contour = cvb::cvConvertChainCodesToPolygon(&cur_tracked_objects[i]->currentRegion().contour);				
-			vector<cv::Point>  pcontour(contour->size());
-			for (unsigned j =0; j < contour->size(); j++)
-				pcontour[j] = cv::Point((*contour)[j]);
-			if (contour->size() > 3 && cv::pointPolygonTest(pcontour, Point2f(x, y), false) > 0)
-			{
-				string name;
-			    stringstream ss(video_path + boost::to_string(C.frame_num) + boost::to_string(i));
-			    string item;
-			    while (std::getline(ss, item, '/'))
-			        name += item;
-				Mat mask = Mat::zeros(draw_frame.size(), CV_8UC1);
-				for (int y = 0; y < draw_frame.rows; y++)
-					for (int x = 0; x < draw_frame.cols; x++)
-						if (cv::pointPolygonTest(pcontour, Point2f(x, y), false) > 0)
-							mask.at<uchar>(y, x, 0) = 255;
-				Log::info(0) << name << endl;
-				imwrite(prefix + name + "_src.bmp", C.frame);
-				imwrite(prefix + name + "_msk.bmp", mask);		
-				return;
-			}	
-		}
-		Log::info(0) << "miss contour" <<endl;
-	}
-}
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -214,6 +172,7 @@ int main(int argc, char** argv)
 	try
 	{
 		// Define variables for command-line parameters
+		string video_path;			
 		vector<string> frame_preproc_alg;
 		string detection_alg;
 		vector<string> post_processing_alg;
@@ -889,6 +848,8 @@ int main(int argc, char** argv)
 		//cout << "Number of frames: " << num_frames << endl;
 		// Configure tracking parameters according to video properties
 		//tracker->adaptToVideo(video_cap);
+		// Define buffer for each frame
+		Mat draw_frame;		
 		// Define timers
 		TimeInterval frame_timer;
 		TimeInterval timer;
@@ -952,6 +913,10 @@ int main(int argc, char** argv)
 				exit(1);
 			}
 		}
+		// Initialize context
+		Context C;
+		GtGenerating gt_gen(C);
+
 		// Variable for storing number of fish in each frame
 		int frame_fish_number;
 		// Start processing cycle
@@ -1151,15 +1116,12 @@ int main(int argc, char** argv)
 				{	
 					// Draw ground truth results			
 					ResultsUtils::drawObjects(gt_results, draw_frame, C.frame_num, CV_RGB(0,255,0), 0, 2);
-					cur_tracked_objects.clear();
 					for(unsigned int i=0; i<tracked_objects.size(); i++)
 					{
 						// Get object
 						const TrackedObject& tracked_object = *(tracked_objects[i]);
 						// Draw stuff about this object
 						tracked_object.drawContour(draw_frame, C.frame_num, CV_RGB(255,0,0));				
-						if (tracked_object.lastAppearance() == C.frame_num)
-							cur_tracked_objects.push_back(tracked_objects[i]);
 						// Get blob
 						//const cvb::CvBlob& blob = tracked_object.currentRegion();
 						// Draw rectangle
@@ -1170,9 +1132,8 @@ int main(int argc, char** argv)
 	    			
 					if(tracker->numTrackedObjects() > 0 || gt_results.getObjectsByFrame(C.frame_num).size() > 0 || debug_level > 1)
 					{
-						writer.write(draw_frame);
-						imshow("frame_win", draw_frame);
-						cvSetMouseCallback("frame_win", on_mouse, 0); // ADD this line	
+						gt_gen.nextFrame(draw_frame);
+						imshow("frame_win", draw_frame);	
 						// Check other things to show
 						if(show_motion_output)
 						{
@@ -1237,7 +1198,6 @@ int main(int argc, char** argv)
 			Log::info(0) << ") s, for " << frame_fish_number << " objects." << endl;
 			//cout << "before frame end" << endl; sleep(10);
 		}
-		waitKey(0);
 		//cout << "before setting processing end" << endl; sleep(10);
 		// Set processing end info to db
 		if(enable_db)
@@ -1278,6 +1238,9 @@ int main(int argc, char** argv)
 		{
 			if(enable_db && !no_db_results)
 			{
+				// Save genereted ground truth to DB 
+				gt_gen.saveResult(db_connection);
+
 				// Initialize group insertion vector
 				vector<db::DBEntity*> fish_detection_group_insert;
 				// Get object ids
