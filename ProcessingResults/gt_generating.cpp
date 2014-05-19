@@ -5,6 +5,7 @@
 #include <iostream>
 #include <highgui.h>
 #include <string>
+#include <opencv_utils.h>
 
 using namespace std;
 using namespace cv;
@@ -37,10 +38,9 @@ void on_mouse(int evt, int x, int y, int flags, void* param)
 		    	gt_gen->getResults().addObject(*p_obj);
 			    string name = "filename";
 				Mat mask = Mat::zeros(draw_frame.size(), CV_8UC1);
-				for (int y = 0; y < draw_frame.rows; y++)
-					for (int x = 0; x < draw_frame.cols; x++)
-						if (cv::pointPolygonTest(p_obj->getContour(), Point2f(x, y), false) > 0)
-							mask.at<uchar>(y, x, 0) = 255;
+				drawContour(p_obj->getContour(), mask, Scalar(255,255,255,255), CV_FILLED);
+				imshow("bef", mask);
+				waitKey(0);
 				Log::info(0) << name << endl << gt_gen->getResults().size()<< endl;
 				imwrite("GroundTruth/" + type + "/" + name + "_src.bmp", context.frame);
 				imwrite("GroundTruth/" + type + "/" + name + "_msk.bmp", mask);		
