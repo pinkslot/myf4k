@@ -17,3 +17,4 @@ MYSQL_CONNECTOR_LIB_INCLUDES := -I/usr/local/lib
 # Boost
 BOOST_INCLUDES := -I/usr/include/boost
 BOOST_LIB_INCLUDES := -I/usr/lib
+BOOST_LIBS := -L/usr/lib

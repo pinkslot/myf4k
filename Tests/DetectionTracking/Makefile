@@ -4,7 +4,7 @@
 ROOT_PREFIX := ../../
 
 # Includes and libraries
-LIBS := -leval -lgabor -lmotion_vector -ldet_summary -lutils -lalgorithms -lxmltd -lpr -llog -lnewdb -lutils -lcvblob -lsigar $(shell pkg-config --libs opencv) -lmysqlcppconn -lticppd -lxmlconfig -lboost_thread -lboost_system -llemon -lsvm -lrt
+LIBS := -leval -lgabor -lmotion_vector -ldet_summary -lutils -lalgorithms -lxmltd -lpr -llog -lnewdb -lutils -lcvblob -lsigar $(shell pkg-config --libs opencv) -lmysqlcppconn -lticppd -lxmlconfig -lboost_thread -lboost_system -lboost_filesystem -llemon -lsvm -lrt
 
 # Define subprojects
 SUB_PROJS :=

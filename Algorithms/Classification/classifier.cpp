@@ -8,7 +8,7 @@
 #include <log.h>
 #include <histogram.h>
 #include <iostream>
-
+// TODO fix bag with load model without mean dev value
 namespace alg
 {
 	vector<svm_node> Classifier::extractAIM(Mat img)
@@ -77,11 +77,6 @@ namespace alg
 	// 	features.push_back(c_moments[2]/pow(c_moments[0], 2));		// kurt
 
 	// }
-	bool Classifier::predict(const cvb::CvBlob &blob)
-	{
-		Mat mask = blobToMat(blob);
-		return predict(mask);
-	}
 
 	bool Classifier::predict(const Mat &mask)
 	{
@@ -92,8 +87,8 @@ namespace alg
 		for (unsigned i = 0; i < feature.size(); i++)
 			feature[i].value = (feature[i].value-mean[i]) / dev[i];
 
-		// for (unsigned i = 0; i < feature.size(); i++)
-		// 	cout << feature[i].value << ' ' ;
+		// for (unsigned i = 0; i < feature.size()-1; i++)
+		// 	cout << feature[i].value << ' ';
 		// cout << endl;
 		double res = svm_predict(model, feature.data());
 		return res > 0;
@@ -138,17 +133,18 @@ namespace alg
 			for (unsigned j = 0; j < feature_size; j++)
 				mean[j] += pfeatures[i][j].value, dev[j] += pfeatures[i][j].value * pfeatures[i][j].value;
 		}
+		cout << "mean " << "dev" << endl;
 		for (unsigned j = 0; j < feature_size; j++)
 		{
 			mean[j] /= feature_count;
 			dev[j] = sqrt(dev[j]/feature_count - mean[j]*mean[j]);
 			cout << mean[j] << " " << dev[j] << endl;
-		}		
+		}
 
 		// normalize
 		for (unsigned i  = 0; i < feature_count; i++)
 			for (unsigned j = 0; j < feature_size; j++)
-					pfeatures[i][j].value = (pfeatures[i][j].value-mean[j]) / dev[j];
+				pfeatures[i][j].value = (pfeatures[i][j].value-mean[j]) / dev[j];
 
 		vector<double> label(features.size(), 1);			
 		svm_problem prob = {features.size(), label.data(), features.data()};			
@@ -164,6 +160,7 @@ namespace alg
 
 	void Classifier::loadModel(string path)
 	{
+		path += "model.svm";
 		SVMUtils ut;
 		ut.load(path);
 		model = ut.svm;

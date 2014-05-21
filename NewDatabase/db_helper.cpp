@@ -56,11 +56,11 @@ namespace db
                 for(list<int>::iterator f_it = frames.begin(); f_it != frames.end(); f_it++)
                 {
                         // Get objects in frame
-			pr::ObjectList objects = results.getObjectsByFrame(*f_it);
+						pr::ObjectList objects = results.getObjectsByFrame(*f_it);
                         for(pr::ObjectList::iterator o_it = objects.begin(); o_it != objects.end(); o_it++)
                         {
                                 // Get object
-				pr::Object& object = *o_it;
+								pr::Object& object = *o_it;
                                 // Create record
                                 GtObject gt_object(connection);
                                 gt_object.setField<int>("detection_id", next_detection_id++);
@@ -69,20 +69,20 @@ namespace db
                                 gt_object.setField<string>("type", object.getType());
                                 gt_object.setField<bool>("optional", object.getOptional());
                                 gt_object.setField<int>("frame_number", object.getFrameNumber());
-				/*cout << object.getContour()[0].x << " " << object.getContour()[0].y << endl;
-				cout << object.getContour()[1].x << " " << object.getContour()[1].y << endl;
-				cout << object.getContour()[2].x << " " << object.getContour()[2].y << endl;
-				cout << object.getContour()[3].x << " " << object.getContour()[3].y << endl;
-				cout << object.getContour()[4].x << " " << object.getContour()[4].y << endl;
-				vector<Point> bb = boundingBoxFromContour(object.getContour());
-				string enc = ContourEncoder::encode(bb, object.getContour());
-				vector<Point> dec = ContourEncoder::decode(enc);
-				cout << dec[0].x << " " << dec[0].y << endl;
-				cout << dec[1].x << " " << dec[1].y << endl;
-				cout << dec[2].x << " " << dec[2].y << endl;
-				cout << dec[3].x << " " << dec[3].y << endl;
-				cout << dec[4].x << " " << dec[4].y << endl;
-				exit(0);*/
+								/*cout << object.getContour()[0].x << " " << object.getContour()[0].y << endl;
+								cout << object.getContour()[1].x << " " << object.getContour()[1].y << endl;
+								cout << object.getContour()[2].x << " " << object.getContour()[2].y << endl;
+								cout << object.getContour()[3].x << " " << object.getContour()[3].y << endl;
+								cout << object.getContour()[4].x << " " << object.getContour()[4].y << endl;
+								vector<Point> bb = boundingBoxFromContour(object.getContour());
+								string enc = ContourEncoder::encode(bb, object.getContour());
+								vector<Point> dec = ContourEncoder::decode(enc);
+								cout << dec[0].x << " " << dec[0].y << endl;
+								cout << dec[1].x << " " << dec[1].y << endl;
+								cout << dec[2].x << " " << dec[2].y << endl;
+								cout << dec[3].x << " " << dec[3].y << endl;
+								cout << dec[4].x << " " << dec[4].y << endl;
+								exit(0);*/
                                 gt_object.setField<string>("contour", ContourEncoder::encode(object.getContour()));
                                 // Add to db
                                 gt_object.insertToDB();

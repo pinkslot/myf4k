@@ -6,13 +6,10 @@
 #include <vector>
 
 class SVMUtils
-{
-	private:
-	
+{	
+	public:	
 	// SVM model
 	struct svm_model* svm;
-
-	public:
 
 	// Load SVM
 	void load(std::string path);

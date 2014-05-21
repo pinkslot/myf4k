@@ -28,10 +28,15 @@ namespace alg
 		//Methods	
 		Classifier(): model(0)
 		{
+			// init default value;
+			mean = vector<double>(6), dev = vector<double>(6);
+			mean[0] = 0.395421, mean[1] = 8.69947, mean[2] = 45.229, 
+				mean[3] = -2.17732, mean[4] = 421.798, mean[5] = -6.69579;
+			dev[0] = 0.130585, dev[1] = 17.6471, dev[2] = 122.05,
+				dev[3] = 38.4359, dev[4] = 2259.9, dev[5] = 131.137;
 		}
 		void trainModel(string path);
 		void loadModel(string path);
-		bool predict(const cvb::CvBlob &blob);
 		bool predict(const Mat &mask);
 
 		// Implement algorithm information

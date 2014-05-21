@@ -41,7 +41,7 @@
 #include <detection_evaluation_chooser.h>
 #include <tracking_evaluation_chooser.h>
 #include <bayes_detection_evaluator.h>
-
+#include <classifier.h>
 
 using namespace cv;
 using namespace pr;
@@ -915,8 +915,18 @@ int main(int argc, char** argv)
 		}
 		// Initialize context
 		Context C;
+		C.file_name = video_path;
+		Classifier classif = Classifier();	
 		GtGenerating gt_gen(C);
-
+		try
+		{
+			classif.loadModel("/mnt/fst/train/fish/");
+		}
+		catch(MyException &e)
+		{
+			Log::e() << ShellUtils::RED << "Error filling classifier." << ShellUtils::NORMAL << endl;
+			exit(1);
+		}
 		// Variable for storing number of fish in each frame
 		int frame_fish_number;
 		// Start processing cycle
@@ -1120,8 +1130,13 @@ int main(int argc, char** argv)
 					{
 						// Get object
 						const TrackedObject& tracked_object = *(tracked_objects[i]);
+						Mat mask = drawBlob(tracked_object.currentRegion(), true, C.frame.cols, C.frame.rows);
+						imshow("qweqwe", mask);
 						// Draw stuff about this object
-						tracked_object.drawContour(draw_frame, C.frame_num, CV_RGB(255,0,0));				
+						if (classif.predict(mask))
+							tracked_object.drawContour(draw_frame, C.frame_num, CV_RGB(255,0,0));				
+						else
+							tracked_object.drawContour(draw_frame, C.frame_num, CV_RGB(0,255,0));	
 						// Get blob
 						//const cvb::CvBlob& blob = tracked_object.currentRegion();
 						// Draw rectangle
