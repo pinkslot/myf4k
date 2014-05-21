@@ -87,9 +87,9 @@ namespace alg
 		for (unsigned i = 0; i < feature.size(); i++)
 			feature[i].value = (feature[i].value-mean[i]) / dev[i];
 
-		// for (unsigned i = 0; i < feature.size()-1; i++)
-		// 	cout << feature[i].value << ' ';
-		// cout << endl;
+		for (unsigned i = 0; i < feature.size()-1; i++)
+			cout << mean[i] << " " << dev[i] << endl;
+		svm_save_model("qwe", model);
 		double res = svm_predict(model, feature.data());
 		return res > 0;
 	}
@@ -125,7 +125,7 @@ namespace alg
   				pfeatures.push_back(extractAIM(msk));			
   			}
 		}
-		unsigned feature_count = pfeatures.size(), feature_size = pfeatures[0].size();
+		unsigned feature_count = pfeatures.size(), feature_size = pfeatures[0].size() - 1;
 		mean = vector<double>(feature_size, 0), dev = vector<double>(feature_size, 0);
 		for (unsigned i  = 0; i < feature_count; i++)
 		{
@@ -156,10 +156,15 @@ namespace alg
 		string model_fname = path + "model.svm";
 		/*Log::info(0) */cout <<  "save model as " << model_fname << endl;
 		svm_save_model(model_fname.c_str(), model);
+		SVMUtils ut;
+		ut.load(model_fname);
+		model = ut.svm;	
 	}		
 
 	void Classifier::loadModel(string path)
 	{
+		if ( !boost::filesystem::exists(path) ) 
+			throw MyException("Not such directory");		
 		path += "model.svm";
 		SVMUtils ut;
 		ut.load(path);
