@@ -152,10 +152,10 @@ int main(int argc, char** argv)
 
 	if (stat("GroundTruth", &st) == -1)
     	mkdir("GroundTruth", 0700);
-	if (stat("GroundTruth/src/", &st) == -1)
-    	mkdir("GroundTruth/src/", 0700);    
-	if (stat("GroundTruth/mask/", &st) == -1)
-    	mkdir("GroundTruth/mask/", 0700);  
+	if (stat("GroundTruth/fish/", &st) == -1)
+    	mkdir("GroundTruth/fish/", 0700);    
+	if (stat("GroundTruth/nofish/", &st) == -1)
+    	mkdir("GroundTruth/nofish/", 0700);  
 
 
     VideoWriter writer("result.avi", CV_FOURCC('M','J','P','G'), 8, cvSize(640, 480));	
