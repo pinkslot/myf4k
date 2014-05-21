@@ -8,6 +8,9 @@
 #include <opencv_utils.h>
 #include <sstream>
 
+#include <boost/filesystem.hpp>
+
+
 using namespace std;
 using namespace cv;
 
@@ -34,7 +37,9 @@ void on_mouse(int evt, int x, int y, int flags, void* param)
 		    	// nofish if right-click																																																																																																												
 		    	else if (evt==CV_EVENT_RBUTTONDOWN)
 		    		type = "nofish";
-
+		    	// makedir
+			    boost::filesystem::create_directories("GroundTruth/" + type);
+		    	
 		    	p_obj->setType(type);
 		    	gt_gen->getResults().addObject(*p_obj);
 			    std::stringstream ss(context.file_name);
