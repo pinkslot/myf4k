@@ -920,7 +920,7 @@ int main(int argc, char** argv)
 		GtGenerating gt_gen(C);
 		try
 		{
-			classif.loadModel("/mnt/fst/train/fish/");
+			classif.loadModel("./");
 		}
 		catch(MyException &e)
 		{
@@ -1131,7 +1131,6 @@ int main(int argc, char** argv)
 						// Get object
 						const TrackedObject& tracked_object = *(tracked_objects[i]);
 						Mat mask = drawBlob(tracked_object.currentRegion(), true, C.frame.cols, C.frame.rows);
-						imshow("qweqwe", mask);
 						// Draw stuff about this object
 						if (classif.predict(mask))
 							tracked_object.drawContour(draw_frame, C.frame_num, CV_RGB(255,0,0));				
